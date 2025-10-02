@@ -1,40 +1,44 @@
-import { ArrowLeft, BookOpen, Play, Pause } from 'lucide-react';
-import { useState } from 'react';
-import { type Surah } from '../../data/surahs';
+import { ArrowLeft, BookOpen, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { type DiyanetChapter } from '../../types/quran';
+import { DiyanetApiService } from '../../services/diyanet-api';
+import { type DiyanetVerse } from '../../types/quran';
 
 interface SurahReaderProps {
-  surah: Surah;
+  surah: DiyanetChapter;
   onBack: () => void;
 }
 
-// Mock ayet verisi - gerçek API'den gelecek
-const mockAyahs = [
-  {
-    number: 1,
-    text: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-    translation: 'Rahman ve Rahim olan Allah\'ın adıyla',
-    transliteration: 'Bismillahir rahmanir rahim'
-  },
-  {
-    number: 2,
-    text: 'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ',
-    translation: 'Hamd, âlemlerin Rabbi olan Allah\'a mahsustur',
-    transliteration: 'Alhamdu lillahi rabbil alameen'
-  },
-  {
-    number: 3,
-    text: 'ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-    translation: 'O Rahman\'dır, Rahim\'dir',
-    transliteration: 'Ar rahmanir rahim'
-  }
-];
-
 export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
   const [currentAyah, setCurrentAyah] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [verses, setVerses] = useState<DiyanetVerse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch verses from Diyanet API
+  useEffect(() => {
+    const fetchVerses = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const diyanetApi = DiyanetApiService.getInstance();
+        const fetchedVerses = await diyanetApi.getChapterVerses(surah.SureId);
+        setVerses(fetchedVerses);
+      } catch (err) {
+        setError('Ayetler yüklenirken bir hata oluştu');
+        console.error('Error fetching verses:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVerses();
+  }, [surah.SureId]);
+
+  const currentVerse = verses[currentAyah];
 
   const handleNextAyah = () => {
-    if (currentAyah < mockAyahs.length - 1) {
+    if (currentAyah < verses.length - 1) {
       setCurrentAyah(currentAyah + 1);
     }
   };
@@ -45,38 +49,66 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
     }
   };
 
-  const toggleAudio = () => {
-    setIsPlaying(!isPlaying);
-    // Burada gerçek ses çalma fonksiyonu olacak
+  const handleAyahSelect = (index: number) => {
+    setCurrentAyah(index);
   };
 
-  const ayah = mockAyahs[currentAyah];
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="card">
+        <div className="card-content text-center py-12">
+          <Loader2 className="icon-lg" style={{animation: 'spin 1s linear infinite', margin: '0 auto', color: 'var(--primary-500)'}} />
+          <p className="mt-4" style={{color: 'var(--neutral-600)'}}>Ayetler yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !currentVerse) {
+    return (
+      <div className="card">
+        <div className="card-header">
+          <button onClick={onBack} className="btn btn-secondary btn-icon">
+            <ArrowLeft className="icon-sm" />
+          </button>
+        </div>
+        <div className="card-content text-center py-12">
+          <p style={{color: 'var(--error)'}}>{error || 'Ayetler yüklenemedi'}</p>
+          <button onClick={onBack} className="btn btn-primary mt-4">
+            Geri Dön
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card">
       {/* Header */}
       <div className="card-header">
         <div className="flex items-center justify-between">
-          <button 
+          <button
             onClick={onBack}
             className="btn btn-secondary btn-icon"
           >
             <ArrowLeft className="icon-sm" />
           </button>
-          
+
           <div className="text-center">
             <h2 className="text-xl font-semibold flex items-center gap-3 justify-center">
               <BookOpen className="icon-sm" style={{color: 'var(--primary-500)'}} />
-              {surah.englishName}
+              {surah.SureNameTurkish}
             </h2>
             <p className="text-sm arabic-text" style={{color: 'var(--neutral-600)', marginTop: '0.25rem'}}>
-              {surah.name}
+              {surah.SureNameArabic}
             </p>
             <p className="text-sm" style={{color: 'var(--neutral-600)'}}>
-              {surah.englishNameTranslation} • {surah.numberOfAyahs} ayet • {surah.revelationType === 'Meccan' ? 'Mekki' : 'Medeni'}
+              {surah.SureNameTurkish} • {surah.AyetCount} ayet • {surah.InisOrder <= 86 ? 'Mekki' : 'Medeni'}
             </p>
           </div>
-          
+
           <div style={{width: '2.5rem'}} /> {/* Spacer for center alignment */}
         </div>
       </div>
@@ -86,19 +118,19 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
         <div className="text-center mb-8">
           <div className="mb-4">
             <span className="surah-badge primary" style={{fontSize: '0.875rem', padding: '0.5rem 1rem'}}>
-              {currentAyah + 1}. Ayet
+              {currentVerse.verse_number}. Ayet
             </span>
           </div>
-          
+
           {/* Arabic Text */}
           <div className="mb-6">
             <p className="arabic-text" style={{
-              fontSize: '2rem', 
+              fontSize: '2rem',
               lineHeight: '3rem',
               color: 'var(--foreground)',
               marginBottom: '1rem'
             }}>
-              {ayah.text}
+              {currentVerse.arabic_text}
             </p>
           </div>
 
@@ -112,44 +144,9 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
               lineHeight: '1.75rem',
               color: 'var(--foreground)'
             }}>
-              {ayah.translation}
+              {currentVerse.text}
             </p>
           </div>
-
-          {/* Transliteration */}
-          <div>
-            <h4 className="font-medium mb-2" style={{color: 'var(--sage-600)'}}>
-              Okunuşu:
-            </h4>
-            <p style={{
-              fontSize: '1rem',
-              fontStyle: 'italic',
-              color: 'var(--neutral-600)'
-            }}>
-              {ayah.transliteration}
-            </p>
-          </div>
-        </div>
-
-        {/* Audio Controls */}
-        <div className="text-center mb-6">
-          <button 
-            onClick={toggleAudio}
-            className="btn btn-primary flex items-center gap-2"
-            style={{margin: '0 auto'}}
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="icon-sm" />
-                Duraklat
-              </>
-            ) : (
-              <>
-                <Play className="icon-sm" />
-                Dinle
-              </>
-            )}
-          </button>
         </div>
 
         {/* Navigation */}
@@ -166,11 +163,11 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
             Önceki Ayet
           </button>
 
-          <div className="flex items-center gap-2">
-            {mockAyahs.map((_, index) => (
+          <div className="flex items-center gap-2" style={{maxWidth: '100%', overflowX: 'auto', padding: '0.5rem'}}>
+            {verses.slice(0, Math.min(verses.length, 20)).map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentAyah(index)}
+                onClick={() => handleAyahSelect(index)}
                 style={{
                   width: '0.75rem',
                   height: '0.75rem',
@@ -178,19 +175,25 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
                   border: 'none',
                   backgroundColor: index === currentAyah ? 'var(--primary-500)' : 'var(--neutral-300)',
                   cursor: 'pointer',
-                  transition: 'var(--transition)'
+                  transition: 'var(--transition)',
+                  flexShrink: 0
                 }}
               />
             ))}
+            {verses.length > 20 && (
+              <span style={{fontSize: '0.75rem', color: 'var(--neutral-500)', marginLeft: '0.5rem'}}>
+                +{verses.length - 20}
+              </span>
+            )}
           </div>
 
-          <button 
+          <button
             onClick={handleNextAyah}
-            disabled={currentAyah === mockAyahs.length - 1}
+            disabled={currentAyah === verses.length - 1}
             className="btn btn-secondary"
             style={{
-              opacity: currentAyah === mockAyahs.length - 1 ? 0.5 : 1,
-              cursor: currentAyah === mockAyahs.length - 1 ? 'not-allowed' : 'pointer'
+              opacity: currentAyah === verses.length - 1 ? 0.5 : 1,
+              cursor: currentAyah === verses.length - 1 ? 'not-allowed' : 'pointer'
             }}
           >
             Sonraki Ayet
@@ -202,7 +205,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
       <div className="card-footer">
         <div className="text-center">
           <p className="text-sm" style={{color: 'var(--neutral-600)'}}>
-            {currentAyah + 1} / {mockAyahs.length} ayet
+            {currentAyah + 1} / {verses.length} ayet
           </p>
           <div style={{
             width: '100%',
@@ -212,7 +215,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
             marginTop: '0.5rem'
           }}>
             <div style={{
-              width: `${((currentAyah + 1) / mockAyahs.length) * 100}%`,
+              width: `${((currentAyah + 1) / verses.length) * 100}%`,
               height: '100%',
               backgroundColor: 'var(--primary-500)',
               borderRadius: '0.125rem',

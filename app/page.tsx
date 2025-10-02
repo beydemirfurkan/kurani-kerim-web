@@ -1,13 +1,26 @@
+'use client';
+
 import { BookOpen, Moon, Sun } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SurahList } from './components/quran/surah-list';
 import { SurahReader } from './components/quran/surah-reader';
-import { type Surah } from './data/surahs';
+import { type DiyanetChapter } from './types/quran';
 
-function App() {
+export default function Home() {
   const [isDark, setIsDark] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'surahs' | 'reader'>('home');
-  const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
+  const [selectedSurah, setSelectedSurah] = useState<DiyanetChapter | null>(null);
+
+  // Update document title based on current view and selected surah
+  useEffect(() => {
+    if (currentView === 'reader' && selectedSurah) {
+      document.title = `${selectedSurah.SureNameTurkish} - ${selectedSurah.SureNameArabic} | Kuran-ı Kerim`;
+    } else if (currentView === 'surahs') {
+      document.title = 'Sureler | Kuran-ı Kerim';
+    } else {
+      document.title = 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu';
+    }
+  }, [currentView, selectedSurah]);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -18,7 +31,7 @@ function App() {
     setCurrentView('surahs');
   };
 
-  const handleSurahSelect = (surah: Surah) => {
+  const handleSurahSelect = (surah: DiyanetChapter) => {
     setSelectedSurah(surah);
     setCurrentView('reader');
   };
@@ -42,7 +55,7 @@ function App() {
               <p>Adım adım öğrenme platformu</p>
             </div>
           </div>
-          
+
           <button onClick={toggleTheme} className="btn btn-secondary btn-icon">
             {isDark ? (
               <Sun className="icon-sm" />
@@ -62,7 +75,7 @@ function App() {
                 Kuran-ı Kerim'i Öğrenmeye Başlayın
               </h2>
               <p className="text-lg" style={{maxWidth: '48rem', margin: '0 auto'}}>
-                114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, 
+                114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun,
                 dinleyin ve adım adım öğrenin. İlerlemenizi takip edin.
               </p>
             </div>
@@ -108,7 +121,7 @@ function App() {
 
             {/* CTA Section */}
             <div className="mt-12 text-center">
-              <button 
+              <button
                 onClick={handleStartLearning}
                 className="btn btn-primary btn-lg"
               >
@@ -120,8 +133,8 @@ function App() {
           <SurahList onSurahSelect={handleSurahSelect} />
         ) : (
           selectedSurah && (
-            <SurahReader 
-              surah={selectedSurah} 
+            <SurahReader
+              surah={selectedSurah}
               onBack={handleBackToSurahs}
             />
           )
@@ -130,5 +143,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

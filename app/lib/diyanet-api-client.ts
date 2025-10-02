@@ -1,20 +1,22 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 import { ErrorHandler } from './error-handler';
 
-export interface ApiConfig {
+export interface DiyanetApiConfig {
   baseURL: string;
+  apiKey: string;
   timeout: number;
-  retries: number;
 }
 
-export class ApiClient {
-  private static instance: ApiClient;
+export class DiyanetApiClient {
+  private static instance: DiyanetApiClient;
   private client: AxiosInstance;
   private errorHandler: ErrorHandler;
+  private apiKey: string;
 
-  private constructor(config: ApiConfig) {
+  private constructor(config: DiyanetApiConfig) {
     this.errorHandler = ErrorHandler.getInstance();
-    
+    this.apiKey = config.apiKey;
+
     this.client = axios.create({
       baseURL: config.baseURL,
       timeout: config.timeout,
@@ -26,22 +28,22 @@ export class ApiClient {
     this.setupInterceptors();
   }
 
-  static getInstance(config?: ApiConfig): ApiClient {
-    if (!ApiClient.instance) {
-      const defaultConfig: ApiConfig = {
-        baseURL: 'https://api.alquran.cloud/v1',
-        timeout: 10000,
-        retries: 3,
+  static getInstance(config?: DiyanetApiConfig): DiyanetApiClient {
+    if (!DiyanetApiClient.instance) {
+      const defaultConfig: DiyanetApiConfig = {
+        baseURL: '/api', // Use Next.js API routes instead of direct API calls
+        apiKey: '', // Not needed for client-side, API routes handle authentication
+        timeout: 15000,
       };
-      ApiClient.instance = new ApiClient(config || defaultConfig);
+      DiyanetApiClient.instance = new DiyanetApiClient(config || defaultConfig);
     }
-    return ApiClient.instance;
+    return DiyanetApiClient.instance;
   }
 
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        console.log(`Diyanet API Request: ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
       (error) => {
@@ -52,8 +54,8 @@ export class ApiClient {
     );
 
     this.client.interceptors.response.use(
-      (response: AxiosResponse) => {
-        console.log(`API Response: ${response.status} ${response.config.url}`);
+      (response) => {
+        console.log(`Diyanet API Response: ${response.status} ${response.config.url}`);
         return response;
       },
       (error) => {
@@ -73,27 +75,9 @@ export class ApiClient {
     }
   }
 
-  async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response = await this.client.post<T>(url, data, config);
-      return response.data;
-    } catch (error) {
-      throw this.errorHandler.handleApiError(error);
-    }
-  }
-
-  async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response = await this.client.put<T>(url, data, config);
-      return response.data;
-    } catch (error) {
-      throw this.errorHandler.handleApiError(error);
-    }
-  }
-
-  async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response = await this.client.delete<T>(url, config);
       return response.data;
     } catch (error) {
       throw this.errorHandler.handleApiError(error);
@@ -106,5 +90,10 @@ export class ApiClient {
 
   setTimeout(timeout: number): void {
     this.client.defaults.timeout = timeout;
+  }
+
+  updateApiKey(apiKey: string): void {
+    this.apiKey = apiKey;
+    this.client.defaults.headers.common['Authorization'] = `Bearer ${apiKey}`;
   }
 }

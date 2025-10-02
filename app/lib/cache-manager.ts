@@ -6,7 +6,7 @@ export interface CacheItem<T> {
 
 export class CacheManager {
   private static instance: CacheManager;
-  private cache = new Map<string, CacheItem<any>>();
+  private cache = new Map<string, CacheItem<unknown>>();
   private readonly defaultTTL = 5 * 60 * 1000; // 5 minutes
 
   private constructor() {}

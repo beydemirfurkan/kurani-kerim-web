@@ -51,6 +51,21 @@
   
   /* Transitions */
   --transition: all 0.2s ease-in-out;
+
+  /* Status Colors */
+  --error: #dc2626;
+  --success: #16a34a;
+  --warning: #f59e0b;
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Dark Theme */
