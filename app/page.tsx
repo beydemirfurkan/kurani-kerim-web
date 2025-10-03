@@ -1,48 +1,40 @@
-'use client';
-
 import { BookOpen, Moon, Sun } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { SurahList } from './components/quran/surah-list';
-import { SurahReader } from './components/quran/surah-reader';
-import { type DiyanetChapter } from './types/quran';
+import Link from 'next/link';
+import { DiyanetChapter } from './types/quran';
+import { ThemeToggle } from './components/theme-toggle';
+import { generateSlug } from './lib/slug-utils';
 
-export default function Home() {
-  const [isDark, setIsDark] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'surahs' | 'reader'>('home');
-  const [selectedSurah, setSelectedSurah] = useState<DiyanetChapter | null>(null);
+// Server-side function to fetch chapters
+async function getChapters(): Promise<DiyanetChapter[]> {
+  try {
+    const response = await fetch(
+      `${process.env.DIYANET_API_BASE_URL}/chapters?language=tr`,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.DIYANET_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      }
+    );
 
-  // Update document title based on current view and selected surah
-  useEffect(() => {
-    if (currentView === 'reader' && selectedSurah) {
-      document.title = `${selectedSurah.SureNameTurkish} - ${selectedSurah.SureNameArabic} | Kuran-ı Kerim`;
-    } else if (currentView === 'surahs') {
-      document.title = 'Sureler | Kuran-ı Kerim';
-    } else {
-      document.title = 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu';
+    if (!response.ok) {
+      throw new Error('Failed to fetch chapters');
     }
-  }, [currentView, selectedSurah]);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
-  };
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching chapters:', error);
+    return [];
+  }
+}
 
-  const handleStartLearning = () => {
-    setCurrentView('surahs');
-  };
-
-  const handleSurahSelect = (surah: DiyanetChapter) => {
-    setSelectedSurah(surah);
-    setCurrentView('reader');
-  };
-
-  const handleBackToSurahs = () => {
-    setCurrentView('surahs');
-    setSelectedSurah(null);
-  };
+export default async function HomePage() {
+  const chapters = await getChapters();
 
   return (
-    <div className={`min-h-screen transition ${isDark ? 'dark' : ''}`}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       {/* Header */}
       <header className="header">
         <div className="container header-content">
@@ -56,89 +48,78 @@ export default function Home() {
             </div>
           </div>
 
-          <button onClick={toggleTheme} className="btn btn-secondary btn-icon">
-            {isDark ? (
-              <Sun className="icon-sm" />
-            ) : (
-              <Moon className="icon-sm" />
-            )}
-          </button>
+          <ThemeToggle />
         </div>
       </header>
 
       {/* Main Content */}
       <main className="container py-8">
-        {currentView === 'home' ? (
-          <>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">
-                Kuran-ı Kerim'i Öğrenmeye Başlayın
-              </h2>
-              <p className="text-lg" style={{maxWidth: '48rem', margin: '0 auto'}}>
-                114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun,
-                dinleyin ve adım adım öğrenin. İlerlemenizi takip edin.
-              </p>
-            </div>
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">
+            Kuran-ı Kerim'i Öğrenmeye Başlayın
+          </h2>
+          <p className="text-lg" style={{maxWidth: '48rem', margin: '0 auto'}}>
+            114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun,
+            dinleyin ve adım adım öğrenin. İlerlemenizi takip edin.
+          </p>
+        </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3">
-              {/* Feature Cards */}
-              <div className="feature-card">
-                <div className="feature-icon primary">
-                  <BookOpen className="icon-lg" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">
-                  Arapça Metin
-                </h3>
-                <p>
-                  Orijinal Arapça metinleri güzel yazı fontu ile okuyun
-                </p>
+
+        {/* Surah List */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="text-xl font-semibold flex items-center gap-3">
+              <BookOpen className="icon-sm" style={{color: 'var(--primary-500)'}} />
+              Sureler
+            </h2>
+            <p className="text-sm" style={{color: 'var(--neutral-600)', marginTop: '0.25rem'}}>
+              114 sure arasından seçim yapın
+            </p>
+          </div>
+
+          <div>
+            {chapters.length === 0 ? (
+              <div className="text-center py-12">
+                <p style={{color: 'var(--neutral-600)'}}>Sureler yüklenemedi.</p>
               </div>
+            ) : (
+              chapters.map((chapter) => (
+                <Link
+                  key={chapter.SureId}
+                  href={`/sure/${generateSlug(chapter.SureNameTurkish)}`}
+                  className="surah-item"
+                >
+                  <div className="surah-content">
+                    <div className="surah-number">
+                      {chapter.SureId}
+                    </div>
 
-              <div className="feature-card">
-                <div className="feature-icon sage">
-                  <BookOpen className="icon-lg" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">
-                  Türkçe Meal
-                </h3>
-                <p>
-                  Güvenilir Türkçe çeviriler ile anlam öğrenin
-                </p>
-              </div>
-
-              <div className="feature-card">
-                <div className="feature-icon primary">
-                  <BookOpen className="icon-lg" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">
-                  Sesli Okuma
-                </h3>
-                <p>
-                  Profesyonel kıraat ile ayetleri dinleyin
-                </p>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="mt-12 text-center">
-              <button
-                onClick={handleStartLearning}
-                className="btn btn-primary btn-lg"
-              >
-                Öğrenmeye Başla
-              </button>
-            </div>
-          </>
-        ) : currentView === 'surahs' ? (
-          <SurahList onSurahSelect={handleSurahSelect} />
-        ) : (
-          selectedSurah && (
-            <SurahReader
-              surah={selectedSurah}
-              onBack={handleBackToSurahs}
-            />
-          )
-        )}
+                    <div className="surah-info">
+                      <div className="surah-names">
+                        <h3 className="surah-name">
+                          {chapter.SureNameTurkish}
+                        </h3>
+                        <span className="surah-arabic arabic-text">
+                          {chapter.SureNameArabic}
+                        </span>
+                      </div>
+                      <div className="surah-details">
+                        <span>{chapter.AyetCount} ayet</span>
+                        <span>•</span>
+                        <span className={`surah-badge ${
+                          chapter.InisOrder <= 86 ? 'meccan' : 'medinan'
+                        }`}>
+                          {chapter.InisOrder <= 86 ? 'Mekki' : 'Medeni'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
       </main>
     </div>
   );

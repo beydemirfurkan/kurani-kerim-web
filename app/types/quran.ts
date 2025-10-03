@@ -72,15 +72,16 @@ export interface DiyanetChapter {
 }
 
 export interface DiyanetVerse {
-  id: number;
-  surah_number: number;
-  verse_number: number;
-  text: string;
-  arabic_text: string;
-  juz_number: number;
   page_number: number;
-  surah_name_turkish: string;
-  surah_name_arabic: string;
+  surah_id: number;
+  verse_id_in_surah: number;
+  translation: {
+    text: string;
+  };
+  arabic_script: {
+    text_font_id: number;
+    text: string;
+  };
 }
 
 export interface DiyanetApiResponse<T> {

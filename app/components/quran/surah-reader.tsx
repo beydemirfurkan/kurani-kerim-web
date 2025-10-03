@@ -118,7 +118,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
         <div className="text-center mb-8">
           <div className="mb-4">
             <span className="surah-badge primary" style={{fontSize: '0.875rem', padding: '0.5rem 1rem'}}>
-              {currentVerse.verse_number}. Ayet
+              {currentVerse.verse_id_in_surah}. Ayet
             </span>
           </div>
 
@@ -130,7 +130,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
               color: 'var(--foreground)',
               marginBottom: '1rem'
             }}>
-              {currentVerse.arabic_text}
+              {currentVerse.arabic_script.text}
             </p>
           </div>
 
@@ -144,7 +144,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
               lineHeight: '1.75rem',
               color: 'var(--foreground)'
             }}>
-              {currentVerse.text}
+              {currentVerse.translation.text}
             </p>
           </div>
         </div>
