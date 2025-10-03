@@ -5,7 +5,11 @@ import './globals.css';
 import { ThemeToggle } from './components/theme-toggle';
 import { LanguageSwitcher } from './components/language-switcher';
 import { LanguageProvider } from './contexts/language-context';
+import { ProgressProvider } from './contexts/progress-context';
+import { SearchProvider } from './contexts/search-context';
 import { Footer } from './components/footer';
+import { HeaderSearch } from './components/header-search';
+import { GlobalSearch } from './components/global-search';
 
 export const metadata: Metadata = {
   title: 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu',
@@ -54,7 +58,9 @@ export default function RootLayout({
       </head>
       <body>
         <LanguageProvider>
-          <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+          <ProgressProvider>
+            <SearchProvider>
+              <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
             {/* Header */}
             <header className="header">
               <div className="container header-content">
@@ -68,7 +74,8 @@ export default function RootLayout({
                   </div>
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <HeaderSearch />
                   <LanguageSwitcher />
                   <ThemeToggle />
                 </div>
@@ -78,7 +85,12 @@ export default function RootLayout({
             {children}
 
             <Footer />
-          </div>
+              </div>
+
+              {/* Global Search Modal */}
+              <GlobalSearch />
+            </SearchProvider>
+          </ProgressProvider>
         </LanguageProvider>
       </body>
     </html>

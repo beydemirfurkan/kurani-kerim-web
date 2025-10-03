@@ -137,9 +137,12 @@ class AlQuranAPIService {
     }>;
     total: number;
   }> {
-    const url = `${this.baseURL}/search?q=${encodeURIComponent(query)}&lang=${language}`;
+    // Use local API route for client-side, direct for server-side
+    const baseUrl = typeof window !== 'undefined' ? '/api/quran' : this.baseURL;
+    const url = `${baseUrl}/search?q=${encodeURIComponent(query)}&lang=${language}`;
+
     const response = await fetch(url, {
-      cache: 'default',
+      cache: 'no-store',
     });
 
     if (!response.ok) {

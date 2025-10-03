@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Check, BookCheck } from 'lucide-react';
 import Link from 'next/link';
 import { alQuranAPI, AlQuranSurah, AlQuranSurahDetail } from '@/app/services/alquran-api';
 import { AudioPlayer } from '@/app/components/audio-player';
 import { useLanguage } from '@/app/contexts/language-context';
+import { useProgress } from '@/app/contexts/progress-context';
 
 interface SurahClientProps {
   initialSurah: AlQuranSurah;
@@ -19,10 +20,21 @@ export function SurahClient({
   initialAllSurahs,
 }: SurahClientProps) {
   const { locale, t } = useLanguage();
+  const { isRead, markAsRead, markAsUnread } = useProgress();
   const [surah, setSurah] = useState<AlQuranSurah>(initialSurah);
   const [surahDetail, setSurahDetail] = useState<AlQuranSurahDetail>(initialSurahDetail);
   const [allSurahs, setAllSurahs] = useState<AlQuranSurah[]>(initialAllSurahs);
   const [loading, setLoading] = useState(false);
+
+  const isSurahRead = isRead(surah.id);
+
+  const toggleRead = () => {
+    if (isSurahRead) {
+      markAsUnread(surah.id);
+    } else {
+      markAsRead(surah.id);
+    }
+  };
 
   useEffect(() => {
     // Refetch when locale changes
@@ -140,6 +152,31 @@ export function SurahClient({
             <span>•</span>
             <span>{surah.total_verses} {t('home.verses')}</span>
           </div>
+
+          {/* Mark as Read Button */}
+          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <button
+              onClick={toggleRead}
+              className={`btn ${isSurahRead ? 'btn-secondary' : 'btn-primary'}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              {isSurahRead ? (
+                <>
+                  <Check className="icon-sm" />
+                  <span>Okundu İşaretini Kaldır</span>
+                </>
+              ) : (
+                <>
+                  <BookCheck className="icon-sm" />
+                  <span>Okudum Olarak İşaretle</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Audio Player */}
@@ -154,9 +191,9 @@ export function SurahClient({
               <p style={{color: 'var(--neutral-600)'}}>Verses could not be loaded.</p>
             </div>
           ) : (
-            <div style={{ padding: '2rem' }}>
+            <div style={{ padding: '1rem' }} className="verses-container">
               {surahDetail.verses.map((verse, index) => (
-                <div key={verse.id} style={{ marginBottom: index < surahDetail.verses.length - 1 ? '3rem' : '0' }}>
+                <div key={verse.id} style={{ marginBottom: index < surahDetail.verses.length - 1 ? '2rem' : '0' }} className="verse-item">
                   {/* Verse Number Badge */}
                   <div style={{
                     display: 'flex',

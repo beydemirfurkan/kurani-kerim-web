@@ -4,28 +4,11 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer style={{
-      borderTop: '1px solid var(--border)',
-      marginTop: '4rem',
-      padding: '2rem 0',
-      backgroundColor: 'var(--card-bg)'
-    }}>
+    <footer className="footer-container">
       <div className="container">
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem',
-          textAlign: 'center'
-        }}>
+        <div className="footer-content">
           {/* Main text */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.875rem',
-            color: 'var(--neutral-600)'
-          }} className="footer-text">
+          <div className="footer-text footer-main">
             <span>Made with</span>
             <Heart style={{ width: '1rem', height: '1rem', color: 'var(--primary-500)' }} />
             <span>by</span>
@@ -46,10 +29,7 @@ export function Footer() {
           </div>
 
           {/* Copyright */}
-          <div style={{
-            fontSize: '0.75rem',
-            color: 'var(--neutral-500)'
-          }} className="footer-copyright">
+          <div className="footer-copyright">
             © {currentYear} Kuran-ı Kerim. All rights reserved.
           </div>
         </div>
