@@ -12,10 +12,10 @@ interface LanguageContextType {
 
 const translations = {
   tr: {
-    'app.name': 'Kuran-ı Kerim',
-    'app.tagline': 'Adım adım öğrenme platformu',
-    'home.title': "Kuran-ı Kerim'i Öğrenmeye Başlayın",
-    'home.description': '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve adım adım öğrenin.',
+    'app.name': 'Kuran Dersleri',
+    'app.tagline': 'Online Kuran öğrenme platformu',
+    'home.title': "Online Kuran Derslerine Başlayın",
+    'home.description': '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve online kuran dersleri alın.',
     'home.surahs': 'Sureler',
     'home.surahsDescription': '114 sure arasından seçim yapın',
     'home.verses': 'ayet',
@@ -28,10 +28,10 @@ const translations = {
     'surah.backToHome': 'Ana Sayfa',
   },
   en: {
-    'app.name': 'Holy Quran',
-    'app.tagline': 'Step-by-step learning platform',
-    'home.title': 'Start Learning the Holy Quran',
-    'home.description': 'Read, listen and learn 114 surahs and thousands of verses with translations.',
+    'app.name': 'Quran Lessons',
+    'app.tagline': 'Online Quran learning platform',
+    'home.title': 'Start Your Online Quran Lessons',
+    'home.description': 'Read, listen and learn 114 surahs and thousands of verses with online Quran lessons.',
     'home.surahs': 'Surahs',
     'home.surahsDescription': 'Choose from 114 surahs',
     'home.verses': 'verses',

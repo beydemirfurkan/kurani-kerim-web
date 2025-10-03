@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { BookOpen } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import './globals.css';
 import { ThemeToggle } from './components/theme-toggle';
@@ -12,19 +12,36 @@ import { HeaderSearch } from './components/header-search';
 import { GlobalSearch } from './components/global-search';
 
 export const metadata: Metadata = {
-  title: 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu',
-  description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve adım adım öğrenin. İlerlemenizi takip edin.',
-  keywords: 'kuran, kuran-ı kerim, meal, türkçe meal, arapça, sure, ayet, islam, din, öğrenme',
-  authors: [{ name: 'Kuran-ı Kerim Platformu' }],
+  title: 'Kuran Dersleri - Online Kuran Öğrenme Platformu',
+  description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve online kuran dersleri alın. İlerlemenizi takip edin.',
+  keywords: 'kuran dersleri, online kuran, kuran öğrenme, meal, türkçe meal, arapça, sure, ayet, islam, din, eğitim',
+  authors: [{ name: 'Kuran Dersleri' }],
+  metadataBase: new URL('https://kurandersleri.com'),
   openGraph: {
     type: 'website',
-    title: 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu',
-    description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve adım adım öğrenin.',
+    title: 'Kuran Dersleri - Online Kuran Öğrenme Platformu',
+    description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve online kuran dersleri alın.',
+    url: 'https://kurandersleri.com',
+    siteName: 'Kuran Dersleri',
+    images: [
+      {
+        url: '/kurandersleri.png',
+        width: 1200,
+        height: 630,
+        alt: 'Kuran Dersleri - Online Kuran Öğrenme Platformu',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu',
-    description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve adım adım öğrenin.',
+    title: 'Kuran Dersleri - Online Kuran Öğrenme Platformu',
+    description: '114 sure ve binlerce ayeti Türkçe mealleri ile birlikte okuyun, dinleyin ve online kuran dersleri alın.',
+    images: ['/kurandersleri.png'],
+  },
+  icons: {
+    icon: '/kurandersleri.png',
+    shortcut: '/kurandersleri.png',
+    apple: '/kurandersleri.png',
   },
 };
 
@@ -37,13 +54,13 @@ export default function RootLayout({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Kuran-ı Kerim',
-    description: 'Adım adım öğrenme platformu - 114 sure ve binlerce ayeti mealleri ile birlikte okuyun, dinleyin.',
-    url: 'https://kurani-kerim.com',
+    name: 'Kuran Dersleri',
+    description: 'Online Kuran öğrenme platformu - 114 sure ve binlerce ayeti mealleri ile birlikte okuyun, dinleyin ve kuran dersleri alın.',
+    url: 'https://kurandersleri.com',
     inLanguage: ['tr', 'en', 'ar'],
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://kurani-kerim.com/sure/{slug}',
+      target: 'https://kurandersleri.com/sure/{slug}',
       'query-input': 'required name=slug',
     },
   };
@@ -66,11 +83,17 @@ export default function RootLayout({
               <div className="container header-content">
                 <Link href="/" className="logo" style={{ textDecoration: 'none' }}>
                   <div className="logo-icon">
-                    <BookOpen className="icon-md" />
+                    <Image
+                      src="/kurandersleri.png"
+                      alt="Kuran Dersleri Logo"
+                      width={40}
+                      height={40}
+                      style={{ borderRadius: '8px' }}
+                    />
                   </div>
                   <div className="logo-text">
-                    <h1>Kuran-ı Kerim</h1>
-                    <p>Adım adım öğrenme platformu</p>
+                    <h1>Kuran Dersleri</h1>
+                    <p>Online Kuran öğrenme platformu</p>
                   </div>
                 </Link>
 
