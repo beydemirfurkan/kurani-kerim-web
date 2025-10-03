@@ -1,24 +1,3 @@
-  1. Arama Özelliği 🔍
-
-  - Ayet içeriğinde kelime araması 
-  - Sure isimlerine göre filtreleme
-
-  2. Okuma İlerlemesi 📊
-
-  - Hangi sureleri okuduğunu takip et
-  - localStorage ile progress kaydet
-  - Progress bar gösterimi
-
-    3. Yer İmleri / Favoriler ⭐
-
-  - Favori ayetleri kaydet
-  - Daha sonra okumak için işaretle
-
-    4. Paylaşım 📤
-
-  - Ayetleri sosyal medyada paylaş
-  - Özel ayet linkleri oluştur
-
     6. Tefsir Entegrasyonu 📚
 
   - Ayetlerin tefsirini göster

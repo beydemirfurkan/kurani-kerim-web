@@ -5,8 +5,11 @@ import { ChevronRight, Check, BookCheck } from 'lucide-react';
 import Link from 'next/link';
 import { alQuranAPI, AlQuranSurah, AlQuranSurahDetail } from '@/app/services/alquran-api';
 import { AudioPlayer } from '@/app/components/audio-player';
+import { VerseProgressIndicator } from '@/app/components/verse-progress-indicator';
+import { VerseShareButton } from '@/app/components/verse-share-button';
 import { useLanguage } from '@/app/contexts/language-context';
 import { useProgress } from '@/app/contexts/progress-context';
+import { useVerseVisibility } from '@/app/hooks/use-verse-visibility';
 
 interface SurahClientProps {
   initialSurah: AlQuranSurah;
@@ -25,6 +28,9 @@ export function SurahClient({
   const [surahDetail, setSurahDetail] = useState<AlQuranSurahDetail>(initialSurahDetail);
   const [allSurahs, setAllSurahs] = useState<AlQuranSurah[]>(initialAllSurahs);
   const [loading, setLoading] = useState(false);
+
+  // Verse visibility tracking
+  const { visibleVerses, readVerses, setVerseRef, getReadProgress } = useVerseVisibility(surahDetail.verses.length);
 
   const isSurahRead = isRead(surah.id);
 
@@ -94,12 +100,45 @@ export function SurahClient({
     numberOfPages: surah.total_verses,
   };
 
+  const scrollToVerse = (verseIndex: number) => {
+    const verseElement = document.querySelector(`[data-verse-index="${verseIndex}"]`);
+    if (verseElement) {
+      verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  // Handle URL anchors on page load
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#ayet-')) {
+      const verseNumber = parseInt(hash.replace('#ayet-', ''));
+      if (verseNumber && surahDetail.verses.length > 0) {
+        // Wait for render to complete
+        setTimeout(() => {
+          const verseElement = document.getElementById(`ayet-${verseNumber}`);
+          if (verseElement) {
+            verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 500);
+      }
+    }
+  }, [surahDetail.verses]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
+      
+      {/* Verse Progress Indicator */}
+      <VerseProgressIndicator
+        totalVerses={surahDetail.verses.length}
+        readVerses={readVerses}
+        visibleVerses={visibleVerses}
+        onVerseClick={scrollToVerse}
+      />
+      
       <main className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
         <div className="content-container">
         {/* Breadcrumb */}
@@ -193,15 +232,29 @@ export function SurahClient({
           ) : (
             <div style={{ padding: '1rem' }} className="verses-container">
               {surahDetail.verses.map((verse, index) => (
-                <div key={verse.id} style={{ marginBottom: index < surahDetail.verses.length - 1 ? '2rem' : '0' }} className="verse-item">
-                  {/* Verse Number Badge */}
+                <div 
+                  key={verse.id} 
+                  ref={setVerseRef(index)}
+                  data-verse-index={index}
+                  style={{ 
+                    marginBottom: index < surahDetail.verses.length - 1 ? '2rem' : '0',
+                    transition: 'all 0.3s ease',
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: readVerses.has(index) ? 'var(--success-50)' : 
+                                   visibleVerses[index] ? 'var(--primary-50)' : 'transparent',
+                    border: readVerses.has(index) ? '1px solid var(--success-200)' :
+                           visibleVerses[index] ? '1px solid var(--primary-200)' : '1px solid transparent'
+                  }} 
+                  className="verse-item">
+                  {/* Verse Number Badge & Share Button */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
                     marginBottom: '1rem'
                   }}>
-                    <span className="verse-number-badge">
+                    <span className="verse-number-badge" id={`ayet-${verse.id}`}>
                       {verse.id}
                     </span>
                     <div style={{
@@ -209,6 +262,14 @@ export function SurahClient({
                       height: '1px',
                       backgroundColor: 'var(--border)'
                     }} />
+                    <VerseShareButton
+                      surahId={surah.id}
+                      surahName={surah.translation}
+                      surahNameArabic={surah.name}
+                      verseNumber={verse.id}
+                      arabicText={verse.text}
+                      translation={verse.translation}
+                    />
                   </div>
 
                   {/* Arabic Text */}
