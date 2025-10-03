@@ -1,7 +1,4 @@
-import { BookOpen } from 'lucide-react';
-import Link from 'next/link';
 import { alQuranAPI } from './services/alquran-api';
-import { generateSlug } from './lib/slug-utils';
 import { HomeClient } from './components/home-client';
 
 export const metadata = {

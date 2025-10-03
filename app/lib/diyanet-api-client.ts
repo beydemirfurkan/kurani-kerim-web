@@ -11,11 +11,9 @@ export class DiyanetApiClient {
   private static instance: DiyanetApiClient;
   private client: AxiosInstance;
   private errorHandler: ErrorHandler;
-  private apiKey: string;
 
   private constructor(config: DiyanetApiConfig) {
     this.errorHandler = ErrorHandler.getInstance();
-    this.apiKey = config.apiKey;
 
     this.client = axios.create({
       baseURL: config.baseURL,
@@ -93,7 +91,6 @@ export class DiyanetApiClient {
   }
 
   updateApiKey(apiKey: string): void {
-    this.apiKey = apiKey;
     this.client.defaults.headers.common['Authorization'] = `Bearer ${apiKey}`;
   }
 }
