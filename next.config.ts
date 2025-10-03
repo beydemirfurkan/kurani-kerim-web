@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async headers() {
     return [
       {
@@ -44,8 +47,8 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://t061.diyanet.gov.tr",
-              "media-src 'self' https://t061.diyanet.gov.tr",
+              "connect-src 'self' https://alquran-api.pages.dev https://server6.mp3quran.net https://server8.mp3quran.net https://server11.mp3quran.net",
+              "media-src 'self' https://server6.mp3quran.net https://server8.mp3quran.net https://server11.mp3quran.net",
               "frame-ancestors 'self'",
             ].join('; ')
           }

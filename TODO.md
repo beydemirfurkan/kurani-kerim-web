@@ -1,0 +1,3 @@
+- her ayet için her sure için sesli okuma, sesli transkript takibi olmalı.
+- arapça okunuşları da gerekiyor. onlar da gelmeli.
+- dil alt yapısı. sadece türkçe için değil. ingilizce için de olsun. ingilizce meal da olsun. 

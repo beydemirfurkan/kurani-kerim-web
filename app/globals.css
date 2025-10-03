@@ -112,9 +112,27 @@ h3 { font-size: 1.25rem; }
 
 /* Layout Components */
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 3rem;
+  }
+}
+
+/* Content Container - narrower for reading */
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .grid {
@@ -234,12 +252,7 @@ h3 { font-size: 1.25rem; }
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
   transition: var(--transition);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-md);
 }
 
 .card-header {
@@ -263,13 +276,8 @@ h3 { font-size: 1.25rem; }
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
   transition: var(--transition);
   text-align: left;
-}
-
-.feature-card:hover {
-  box-shadow: var(--shadow-md);
 }
 
 .feature-icon {
@@ -431,6 +439,17 @@ h3 { font-size: 1.25rem; }
 
 .dark .surah-item:hover .surah-chevron {
   color: var(--neutral-300);
+}
+
+/* Breadcrumb */
+.breadcrumb-link {
+  color: var(--primary-600);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--primary-700);
 }
 
 /* Utility Classes */
