@@ -1,26 +1,33 @@
 import { notFound } from 'next/navigation';
 import { alQuranAPI } from '@/app/services/alquran-api';
-import { generateSlug } from '@/app/lib/slug-utils';
 import { SurahClient } from '@/app/components/surah-client';
 import type { Metadata } from 'next';
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }
 
 // Generate static params for all surahs
 export async function generateStaticParams() {
   const data = await alQuranAPI.getAllSurahs('tr');
   return data.surahs.map((surah) => ({
-    slug: generateSlug(surah.translation),
+    id: surah.id.toString(),
   }));
 }
 
 // Generate metadata for each surah page
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { id } = await params;
+  const surahId = parseInt(id);
+
+  if (isNaN(surahId) || surahId < 1 || surahId > 114) {
+    return {
+      title: 'Sure Bulunamadı',
+    };
+  }
+
   const data = await alQuranAPI.getAllSurahs('tr');
-  const surah = data.surahs.find(s => generateSlug(s.translation) === slug);
+  const surah = data.surahs.find(s => s.id === surahId);
 
   if (!surah) {
     return {
@@ -41,13 +48,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function SurePage({ params }: PageProps) {
-  const { slug } = await params;
+  const { id } = await params;
+  const surahId = parseInt(id);
+
+  if (isNaN(surahId) || surahId < 1 || surahId > 114) {
+    notFound();
+  }
 
   // Server-side data fetching
   const data = await alQuranAPI.getAllSurahs('tr');
   const allSurahs = data.surahs;
 
-  const foundSurah = allSurahs.find(s => generateSlug(s.translation) === slug);
+  const foundSurah = allSurahs.find(s => s.id === surahId);
 
   if (!foundSurah) {
     notFound();
@@ -60,7 +72,6 @@ export default async function SurePage({ params }: PageProps) {
       initialSurah={foundSurah}
       initialSurahDetail={surahDetail}
       initialAllSurahs={allSurahs}
-      slug={slug}
     />
   );
 }

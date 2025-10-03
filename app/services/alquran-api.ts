@@ -3,7 +3,11 @@
  * Base URL: https://alquran-api.pages.dev/api/quran
  */
 
-const ALQURAN_API_BASE_URL = 'https://alquran-api.pages.dev/api/quran';
+// Use local API route to avoid CORS issues
+const ALQURAN_API_BASE_URL = typeof window !== 'undefined'
+  ? '/api/quran'  // Client-side: use local API route
+  : 'https://alquran-api.pages.dev/api/quran';  // Server-side: use direct API
+
 const DEFAULT_LANGUAGE = 'tr';
 
 export interface AudioRecitation {
@@ -58,7 +62,7 @@ class AlQuranAPIService {
   async getAllSurahs(language: string = DEFAULT_LANGUAGE): Promise<AlQuranListResponse> {
     const url = `${this.baseURL}?lang=${language}`;
     const response = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -74,7 +78,7 @@ class AlQuranAPIService {
   async getSurah(surahId: number, language: string = DEFAULT_LANGUAGE): Promise<AlQuranSurahDetail> {
     const url = `${this.baseURL}/surah/${surahId}?lang=${language}`;
     const response = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -103,7 +107,7 @@ class AlQuranAPIService {
   }> {
     const url = `${this.baseURL}/surah/${surahId}/verse/${verseId}?lang=${language}`;
     const response = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      cache: 'force-cache',
     });
 
     if (!response.ok) {
@@ -135,7 +139,7 @@ class AlQuranAPIService {
   }> {
     const url = `${this.baseURL}/search?q=${encodeURIComponent(query)}&lang=${language}`;
     const response = await fetch(url, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: 'default',
     });
 
     if (!response.ok) {

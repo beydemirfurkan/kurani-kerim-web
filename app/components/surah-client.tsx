@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { alQuranAPI, AlQuranSurah, AlQuranSurahDetail } from '@/app/services/alquran-api';
-import { generateSlug } from '@/app/lib/slug-utils';
 import { AudioPlayer } from '@/app/components/audio-player';
 import { useLanguage } from '@/app/contexts/language-context';
 
@@ -12,14 +11,12 @@ interface SurahClientProps {
   initialSurah: AlQuranSurah;
   initialSurahDetail: AlQuranSurahDetail;
   initialAllSurahs: AlQuranSurah[];
-  slug: string;
 }
 
 export function SurahClient({
   initialSurah,
   initialSurahDetail,
   initialAllSurahs,
-  slug,
 }: SurahClientProps) {
   const { locale, t } = useLanguage();
   const [surah, setSurah] = useState<AlQuranSurah>(initialSurah);
@@ -34,15 +31,20 @@ export function SurahClient({
       Promise.all([
         alQuranAPI.getAllSurahs(locale),
         alQuranAPI.getSurah(surah.id, locale),
-      ]).then(([data, detail]) => {
-        setAllSurahs(data.surahs);
-        const foundSurah = data.surahs.find(s => s.id === surah.id);
-        if (foundSurah) {
-          setSurah(foundSurah);
-        }
-        setSurahDetail(detail);
-        setLoading(false);
-      });
+      ])
+        .then(([data, detail]) => {
+          setAllSurahs(data.surahs);
+          const foundSurah = data.surahs.find(s => s.id === surah.id);
+          if (foundSurah) {
+            setSurah(foundSurah);
+          }
+          setSurahDetail(detail);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching surah data:', error);
+          setLoading(false);
+        });
     } else {
       setSurah(initialSurah);
       setSurahDetail(initialSurahDetail);
@@ -62,8 +64,6 @@ export function SurahClient({
 
   const prevSurah = allSurahs.find(s => s.id === surah.id - 1);
   const nextSurah = allSurahs.find(s => s.id === surah.id + 1);
-  const prevSlug = prevSurah ? generateSlug(prevSurah.translation) : null;
-  const nextSlug = nextSurah ? generateSlug(nextSurah.translation) : null;
 
   // Structured Data (JSON-LD) for SEO
   const structuredData = {
@@ -104,14 +104,10 @@ export function SurahClient({
                 {t('surah.breadcrumbHome')}
               </Link>
             </li>
-            <li style={{
-              display: 'flex',
-              alignItems: 'center',
-              color: 'var(--neutral-400)'
-            }}>
+            <li className="breadcrumb-separator">
               <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
             </li>
-            <li style={{ color: 'var(--neutral-600)' }}>
+            <li className="breadcrumb-current">
               {surah.translation}
             </li>
           </ol>
@@ -133,23 +129,11 @@ export function SurahClient({
             {surah.translation}
           </h1>
 
-          <div className="arabic-text" style={{
-            fontSize: '2rem',
-            color: 'var(--neutral-500)',
-            marginBottom: '1rem',
-            textAlign: 'center'
-          }}>
+          <div className="arabic-text surah-header-arabic">
             {surah.name}
           </div>
 
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1rem',
-            fontSize: '0.875rem',
-            color: 'var(--neutral-600)'
-          }}>
+          <div className="surah-header-info">
             <span className={`surah-badge ${surah.type === 'meccan' ? 'meccan' : 'medinan'}`}>
               {surah.type === 'meccan' ? t('home.meccan') : t('home.medinan')}
             </span>
@@ -180,19 +164,7 @@ export function SurahClient({
                     gap: '1rem',
                     marginBottom: '1rem'
                   }}>
-                    <span style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: '2rem',
-                      height: '2rem',
-                      borderRadius: '50%',
-                      backgroundColor: 'var(--primary-100)',
-                      color: 'var(--primary-700)',
-                      fontSize: '0.875rem',
-                      fontWeight: '600',
-                      padding: '0 0.5rem'
-                    }}>
+                    <span className="verse-number-badge">
                       {verse.id}
                     </span>
                     <div style={{
@@ -203,33 +175,15 @@ export function SurahClient({
                   </div>
 
                   {/* Arabic Text */}
-                  <div style={{
-                    textAlign: 'right',
-                    marginBottom: '1.5rem',
-                    padding: '1.5rem',
-                    backgroundColor: 'var(--background)',
-                    borderRadius: '0.5rem'
-                  }}>
-                    <p className="arabic-text" style={{
-                      fontSize: '1.75rem',
-                      lineHeight: '3rem',
-                      color: 'var(--foreground)'
-                    }}>
+                  <div className="verse-arabic-container">
+                    <p className="arabic-text verse-arabic-text">
                       {verse.text}
                     </p>
                   </div>
 
                   {/* Translation */}
-                  <div style={{
-                    paddingLeft: '1rem',
-                    borderLeft: '3px solid var(--primary-200)'
-                  }}>
-                    <p style={{
-                      fontSize: '1.0625rem',
-                      lineHeight: '1.75rem',
-                      color: 'var(--neutral-700)',
-                      textAlign: 'left'
-                    }}>
+                  <div className="verse-translation-container">
+                    <p className="verse-translation-text">
                       {verse.translation}
                     </p>
                   </div>
@@ -261,9 +215,9 @@ export function SurahClient({
             gap: '1rem',
             flexWrap: 'wrap'
           }}>
-            {prevSlug ? (
-              <Link href={`/sure/${prevSlug}`} className="btn btn-secondary">
-                ← {prevSurah?.translation}
+            {prevSurah ? (
+              <Link href={`/sure/${prevSurah.id}`} className="btn btn-secondary">
+                ← {prevSurah.translation}
               </Link>
             ) : (
               <div style={{ width: '150px' }} />
@@ -273,9 +227,9 @@ export function SurahClient({
               {t('surah.backToHome')}
             </Link>
 
-            {nextSlug ? (
-              <Link href={`/sure/${nextSlug}`} className="btn btn-secondary">
-                {nextSurah?.translation} →
+            {nextSurah ? (
+              <Link href={`/sure/${nextSurah.id}`} className="btn btn-secondary">
+                {nextSurah.translation} →
               </Link>
             ) : (
               <div style={{ width: '150px' }} />

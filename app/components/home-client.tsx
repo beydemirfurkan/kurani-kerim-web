@@ -3,7 +3,6 @@
 import { BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '../contexts/language-context';
-import { generateSlug } from '../lib/slug-utils';
 import type { AlQuranSurah } from '../services/alquran-api';
 import { useEffect, useState } from 'react';
 import { alQuranAPI } from '../services/alquran-api';
@@ -21,10 +20,15 @@ export function HomeClient({ initialSurahs }: HomeClientProps) {
     // Only refetch if locale changes from default 'tr'
     if (locale !== 'tr') {
       setLoading(true);
-      alQuranAPI.getAllSurahs(locale).then(data => {
-        setSurahs(data.surahs);
-        setLoading(false);
-      });
+      alQuranAPI.getAllSurahs(locale)
+        .then(data => {
+          setSurahs(data.surahs);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching surahs:', error);
+          setLoading(false);
+        });
     } else {
       setSurahs(initialSurahs);
     }
@@ -66,7 +70,7 @@ export function HomeClient({ initialSurahs }: HomeClientProps) {
               surahs.map((surah) => (
                 <Link
                   key={surah.id}
-                  href={`/sure/${generateSlug(surah.translation)}`}
+                  href={`/sure/${surah.id}`}
                   className="surah-item"
                 >
                   <div className="surah-content">

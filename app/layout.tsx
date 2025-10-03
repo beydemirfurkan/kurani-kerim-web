@@ -5,6 +5,7 @@ import './globals.css';
 import { ThemeToggle } from './components/theme-toggle';
 import { LanguageSwitcher } from './components/language-switcher';
 import { LanguageProvider } from './contexts/language-context';
+import { Footer } from './components/footer';
 
 export const metadata: Metadata = {
   title: 'Kuran-ı Kerim - Adım Adım Öğrenme Platformu',
@@ -75,6 +76,8 @@ export default function RootLayout({
             </header>
 
             {children}
+
+            <Footer />
           </div>
         </LanguageProvider>
       </body>

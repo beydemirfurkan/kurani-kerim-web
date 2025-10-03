@@ -59,7 +59,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
       <div className="card">
         <div className="card-content text-center py-12">
           <Loader2 className="icon-lg" style={{animation: 'spin 1s linear infinite', margin: '0 auto', color: 'var(--primary-500)'}} />
-          <p className="mt-4" style={{color: 'var(--neutral-600)'}}>Ayetler yükleniyor...</p>
+          <p className="mt-4 loading-text">Ayetler yükleniyor...</p>
         </div>
       </div>
     );
@@ -101,10 +101,10 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
               <BookOpen className="icon-sm" style={{color: 'var(--primary-500)'}} />
               {surah.SureNameTurkish}
             </h2>
-            <p className="text-sm arabic-text" style={{color: 'var(--neutral-600)', marginTop: '0.25rem'}}>
+            <p className="text-sm arabic-text header-subtitle">
               {surah.SureNameArabic}
             </p>
-            <p className="text-sm" style={{color: 'var(--neutral-600)'}}>
+            <p className="text-sm header-subtitle">
               {surah.SureNameTurkish} • {surah.AyetCount} ayet • {surah.InisOrder <= 86 ? 'Mekki' : 'Medeni'}
             </p>
           </div>
@@ -136,14 +136,10 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
 
           {/* Turkish Translation */}
           <div className="mb-4">
-            <h4 className="font-medium mb-2" style={{color: 'var(--primary-600)'}}>
+            <h4 className="font-medium mb-2 translation-title">
               Türkçe Meal:
             </h4>
-            <p style={{
-              fontSize: '1.125rem',
-              lineHeight: '1.75rem',
-              color: 'var(--foreground)'
-            }}>
+            <p className="translation-text">
               {currentVerse.translation.text}
             </p>
           </div>
@@ -204,7 +200,7 @@ export const SurahReader = ({ surah, onBack }: SurahReaderProps) => {
       {/* Progress */}
       <div className="card-footer">
         <div className="text-center">
-          <p className="text-sm" style={{color: 'var(--neutral-600)'}}>
+          <p className="text-sm progress-text">
             {currentAyah + 1} / {verses.length} ayet
           </p>
           <div style={{

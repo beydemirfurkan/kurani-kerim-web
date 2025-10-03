@@ -70,11 +70,11 @@
 
 /* Dark Theme */
 .dark {
-  --background: var(--neutral-900);
-  --foreground: var(--neutral-50);
-  --border: var(--neutral-700);
-  --card-bg: var(--neutral-800);
-  --header-bg: var(--neutral-800);
+  --background: #0f1419;
+  --foreground: #e6edf3;
+  --border: #30363d;
+  --card-bg: #161b22;
+  --header-bg: #161b22;
 }
 
 /* Reset and Base Styles */
@@ -199,6 +199,10 @@ h3 { font-size: 1.25rem; }
   color: var(--neutral-600);
 }
 
+.dark .logo-text p {
+  color: var(--neutral-400);
+}
+
 /* Button Styles */
 .btn {
   display: inline-flex;
@@ -234,7 +238,7 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .btn-secondary:hover {
-  background-color: var(--neutral-700);
+  background-color: #21262d;
 }
 
 .btn-lg {
@@ -332,7 +336,7 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-item:hover {
-  background-color: var(--neutral-700);
+  background-color: #21262d;
 }
 
 .surah-item:last-child {
@@ -360,8 +364,8 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-number {
-  background-color: var(--primary-900);
-  color: var(--primary-400);
+  background-color: #1a3a2a;
+  color: #4ade80;
 }
 
 .surah-info {
@@ -386,7 +390,7 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-arabic {
-  color: var(--neutral-300);
+  color: #8b949e;
 }
 
 .surah-details {
@@ -398,7 +402,7 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-details {
-  color: var(--neutral-400);
+  color: #7d8590;
 }
 
 .surah-badge {
@@ -419,13 +423,13 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-badge.meccan {
-  background-color: var(--sage-900);
-  color: var(--sage-300);
+  background-color: #2d3748;
+  color: #90cda8;
 }
 
 .dark .surah-badge.medinan {
-  background-color: var(--primary-900);
-  color: var(--primary-300);
+  background-color: #1a3a2a;
+  color: #86efac;
 }
 
 .surah-chevron {
@@ -438,7 +442,17 @@ h3 { font-size: 1.25rem; }
 }
 
 .dark .surah-item:hover .surah-chevron {
-  color: var(--neutral-300);
+  color: #c9d1d9;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 /* Breadcrumb */
@@ -450,6 +464,196 @@ h3 { font-size: 1.25rem; }
 
 .breadcrumb-link:hover {
   color: var(--primary-700);
+}
+
+.dark .breadcrumb-link {
+  color: var(--primary-400);
+}
+
+.dark .breadcrumb-link:hover {
+  color: var(--primary-300);
+}
+
+/* Surah Reader Styles */
+.header-subtitle {
+  color: var(--neutral-600);
+  margin-top: 0.25rem;
+}
+
+.dark .header-subtitle {
+  color: #7d8590;
+}
+
+.translation-title {
+  color: var(--primary-600);
+}
+
+.dark .translation-title {
+  color: #4ade80;
+}
+
+.translation-text {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: var(--foreground);
+}
+
+.dark .translation-text {
+  color: #e6edf3;
+}
+
+.loading-text {
+  color: var(--neutral-600);
+}
+
+.dark .loading-text {
+  color: #7d8590;
+}
+
+.progress-text {
+  color: var(--neutral-600);
+}
+
+.dark .progress-text {
+  color: #7d8590;
+}
+
+/* Verse Display Styles */
+.verse-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: var(--primary-100);
+  color: var(--primary-700);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.dark .verse-number-badge {
+  background-color: #1a3a2a;
+  color: #4ade80;
+}
+
+.verse-arabic-container {
+  text-align: right;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--background);
+  border-radius: 0.5rem;
+}
+
+.dark .verse-arabic-container {
+  background-color: #0d1117;
+}
+
+.verse-arabic-text {
+  font-size: 1.75rem;
+  line-height: 3rem;
+  color: var(--foreground);
+}
+
+.dark .verse-arabic-text {
+  color: #e6edf3;
+}
+
+.verse-translation-container {
+  padding-left: 1rem;
+  border-left: 3px solid var(--primary-200);
+}
+
+.dark .verse-translation-container {
+  border-left-color: #1a3a2a;
+}
+
+.verse-translation-text {
+  font-size: 1.0625rem;
+  line-height: 1.75rem;
+  color: var(--neutral-700);
+  text-align: left;
+}
+
+.dark .verse-translation-text {
+  color: #c9d1d9;
+}
+
+.surah-header-arabic {
+  font-size: 2rem;
+  color: var(--neutral-500);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.dark .surah-header-arabic {
+  color: #8b949e;
+}
+
+.surah-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--neutral-600);
+}
+
+.dark .surah-header-info {
+  color: #7d8590;
+}
+
+.breadcrumb-current {
+  color: var(--neutral-600);
+}
+
+.dark .breadcrumb-current {
+  color: #7d8590;
+}
+
+.breadcrumb-separator {
+  display: flex;
+  align-items: center;
+  color: var(--neutral-400);
+}
+
+.dark .breadcrumb-separator {
+  color: #6e7681;
+}
+
+/* Footer Styles */
+.footer-text {
+  color: var(--neutral-600);
+}
+
+.dark .footer-text {
+  color: #7d8590;
+}
+
+.footer-link {
+  color: var(--primary-600);
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--primary-700);
+}
+
+.dark .footer-link {
+  color: var(--primary-400);
+}
+
+.dark .footer-link:hover {
+  color: var(--primary-300);
+}
+
+.footer-copyright {
+  color: var(--neutral-500);
+}
+
+.dark .footer-copyright {
+  color: #6e7681;
 }
 
 /* Utility Classes */
