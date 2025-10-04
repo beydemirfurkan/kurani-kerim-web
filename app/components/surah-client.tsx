@@ -30,7 +30,7 @@ export function SurahClient({
   const [loading, setLoading] = useState(false);
 
   // Verse visibility tracking
-  const { visibleVerses, readVerses, setVerseRef, getReadProgress } = useVerseVisibility(surahDetail.verses.length);
+  const { visibleVerses, readVerses, setVerseRef } = useVerseVisibility(surahDetail.verses.length);
 
   const isSurahRead = isRead(surah.id);
 

@@ -24,8 +24,7 @@ interface ShareModalProps {
 export function ShareModal({ isOpen, onClose, shareData }: ShareModalProps) {
   const [copiedStates, setCopiedStates] = useState({ link: false, text: false });
   const [showNativeShare, setShowNativeShare] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
 
   useEffect(() => {
     setShowNativeShare(canShare());
@@ -62,27 +61,20 @@ export function ShareModal({ isOpen, onClose, shareData }: ShareModalProps) {
 
   const handleNativeShare = async () => {
     try {
-      setIsSharing(true);
       const success = await nativeShare(shareData);
       if (success) {
         onClose();
       }
     } catch (error) {
       console.error('Native share failed:', error);
-    } finally {
-      setIsSharing(false);
     }
   };
 
   const handleSocialShare = async (shareFunction: () => void) => {
     try {
-      setIsSharing(true);
       shareFunction();
-      // Give some time for the popup to open
-      setTimeout(() => setIsSharing(false), 1000);
     } catch (error) {
       console.error('Social share failed:', error);
-      setIsSharing(false);
     }
   };
 
